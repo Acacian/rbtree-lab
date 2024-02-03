@@ -1,189 +1,52 @@
-#include "rbtree.h"
-#include <stdio.h>
+ï»¿#include "rbtree.h"
+
 #include <stdlib.h>
-#include <malloc.h>
 
-node_t* head_node;
-int node_count;
+rbtree* new_rbtree(void) {
+	rbtree* p = (rbtree*)calloc(1, sizeof(rbtree)); // í¬ì¸í„° ë°°ì—´ì„ í• ë‹¹, ì›ë˜ ìˆë˜ê±°
+	// TODO: initialize struct if needed
+	node_t* nilNode = (node_t*)malloc(sizeof(node_t)); // node_tì— ë°°ì—´í• ë‹¹, ì´ê²ƒë„ híŒŒì¼ì— ì´ë¯¸ ìˆìŒ.
 
-void* head_node_to_t_root(rbtree* t)
-{
-    t->root = head_node->left;
+	nilNode->color = RBTREE_BLACK; //nilNodeë¥¼ ê²€ì€ìƒ‰ìœ¼ë¡œ í• ë‹¹
+
+	p->nil = nilNode; //nilnodeë¥¼ í• ë‹¹í•˜ëŠ” í¬ì¸í„°
+	p->root = nilNode; // rootë¥¼ í• ë‹¹í•˜ëŠ” í¬ì¸í„°
+
+	return p;
 }
 
-//rbtree_to_array·Î Ãâ·ÂµÈ ¹è¿­À» Á¤·ÄÇÏ±â À§ÇÑ ÇÔ¼ö
-
-static int comp(const void* p1, const void* p2)
-{
-    const key_t* e1 = (const key_t*)p1;
-    const key_t* e2 = (const key_t*)p2;
-    if (*e1 < *e2)
-    {
-        return -1;
-    }
-    else if (*e1 > *e2)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-};
-
-
-rbtree *new_rbtree(void) {
-  rbtree *p = (rbtree *)calloc(1, sizeof(rbtree), 1);
-  // TODO: initialize struct if needed
-  return p;
+void delete_rbtree(rbtree* t) {
+	// TODO: reclaim the tree nodes's memory
+	// ë…¸ë“œë¥¼ í•˜ë‚˜ì”© ì°¾ì•„ ê°€ë©´ì„œ ì‚­ì œí•¨.
+	free(t);
 }
 
-void delete_rbtree(rbtree *t) {
-  // TODO: reclaim the tree nodes's memory
-  free(t);
+node_t* rbtree_insert(rbtree* t, const key_t key) {
+	// TODO: implement insert
+	return t->root;
 }
 
-node_t *rbtree_insert(rbtree *t, const key_t key) {
-  // TODO: implement insert
-    node_t* rbtree_insert(rbtree * t, const key_t key)
-    {
-        // TODO: implement insert
-
-        // Ã¹ »ğÀÔ
-        if (t->root == NULL)
-        {
-            // ·çÆ® ¸¸µé±â:
-            node_t* temp;
-            temp = malloc(sizeof(node_t));
-            t->root = temp;
-            t->root->key = key;
-            t->root->color = RBTREE_BLACK;
-            t->root->left = t->root->right = t->root->parent = NULL;
-            node_count = 1;
-
-            //headnode »ı¼º
-            head_node = malloc(sizeof(node_t));
-            head_node->left = t->root;
-            head_node->right = head_node->parent = NULL;
-            head_node->color = RBTREE_BLACK;
-            // t->root->parent = head_node;
-
-            return t->root;
-        }
-
-        //µÎ¹øÂ°+ »ğÀÔ
-        // nÀÌ ÇöÀç ³ëµå¸¦ ÁöÄª.
-        node_t* n, * p, * gp, * ggp;
-        ggp = gp = p = (node_t*)head_node;
-        n = head_node->left;
-
-        while (n)
-        {
-
-            // Áßº¹ ¹æÁö¸¦ À§ÇØ
-            if (key == n->key)
-            {
-                head_node_to_t_root(t);
-                return 0;
-            }
-
-            // »óÇâ »öº¯È¯ °¡´ÉÇÑ »óÈ², ÀÚ½Ä ³ëµå µÎ°³°¡ »¡°­ÀÌ°í ³ª´Â °ËÁ¤ÀÏ¶§
-            if (n->left && n->right && n->left->color == RBTREE_RED && n->right->color == RBTREE_RED)
-            {
-
-                n->color = RBTREE_RED;
-                n->left->color = n->right->color = RBTREE_BLACK;
-
-                // »ö º¯È¯ ÀÌÈÄÀÇ °æ¿ì¿¡¸¸ ¿øÄ¢ À§¹è »óÈ²ÀÌ ¹ß»ıÇÔ. ÀÌ¸¦ ÇØ¼ÒÇÏ±â À§ÇØ È¸ÀüÀÌ ÇÊ¿äÇÑÁö Ã¼Å©.
-
-                // »¡°­ÀÌ ¿¬¼ÓµÇ±â¿¡ È¸Àü ÇÊ¿ä
-                if (p->color == RBTREE_RED)
-                {
-
-                    gp->color = RBTREE_RED;
-
-                    //ÀÌÁß È¸ÀüÀÌ ÇÊ¿äÇÑ °æ¿ì
-                    if ((key > gp->key) != (key > p->key))
-                        p = _Rotate(key, gp, t);
-                    n = _Rotate(key, ggp, t);
-                    n->color = RBTREE_BLACK;
-                }
-
-                // ·çÆ®´Â ¾ğÁ¦³ª °ËÁ¤
-                head_node->left->color = RBTREE_BLACK;
-            }
-
-            //gp, p µîµî ¾÷µ¥ÀÌÆ®
-            ggp = gp;
-            gp = p;
-            p = n;
-
-            // »ğÀÔÇÏ·Á´Â key °ª¿¡ µû¶ó Æ®¸® ÁÂ¿ì °áÁ¤
-            if (key > n->key)
-                n = n->right;
-            else
-                n = n->left;
-        }
-
-        // while¹®À» Å»Ãâ ÇÒ °æ¿ì, NULL leaf¿¡ µµ´ŞÇß´Ù´Â ¶æ
-
-        // key °ªÀ» ¹èÁ¤ÇÒ ³ëµå »ı¼º ÈÄ ¹èÁ¤
-        node_t* temp;
-        temp = malloc(sizeof(node_t));
-        temp->key = key;
-        temp->left = temp->right = NULL;
-        temp->parent = p;
-        temp->color = RBTREE_RED;
-        node_count++;
-
-        //ºÎ¸ğ ³ëµå¿Í ¿¬°á
-        if (key > p->key && p != head_node)
-            p->right = temp;
-        else
-            p->left = temp;
-
-        //ºÎ¸ğ°¡ »¡°­ÀÌ¸é ÇÑ¹ø ´õ È¸Àü / »ğÀÔ ³ëµå´Â »¡°­ÀÌ±â ¶§¹®;
-        if (p->color == RBTREE_RED)
-        {
-
-            gp->color = RBTREE_RED;
-            if ((key > gp->key) != (key > p->key))
-                p = _Rotate(key, gp, t);
-            temp = _Rotate(key, ggp, t);
-            temp->color = RBTREE_BLACK;
-
-        }
-
-        //»Ñ¸®´Â °ËÁ¤À¸·Î
-        head_node->left->color = RBTREE_BLACK;
-
-        head_node_to_t_root(t);
-        return head_node->left;
-    }
-  return t->root;
+node_t* rbtree_find(const rbtree* t, const key_t key) {
+	// TODO: implement find
+	return t->root;
 }
 
-node_t *rbtree_find(const rbtree *t, const key_t key) {
-  // TODO: implement find
-  return t->root;
+node_t* rbtree_min(const rbtree* t) {
+	// TODO: implement find
+	return t->root;
 }
 
-node_t *rbtree_min(const rbtree *t) {
-  // TODO: implement find
-  return t->root;
+node_t* rbtree_max(const rbtree* t) {
+	// TODO: implement find
+	return t->root;
 }
 
-node_t *rbtree_max(const rbtree *t) {
-  // TODO: implement find
-  return t->root;
+int rbtree_erase(rbtree* t, node_t* p) {
+	// TODO: implement erase
+	return 0;
 }
 
-int rbtree_erase(rbtree *t, node_t *p) {
-  // TODO: implement erase
-  return 0;
-}
-
-int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
-  // TODO: implement to_array
-  return 0;
+int rbtree_to_array(const rbtree* t, key_t* arr, const size_t n) {
+	// TODO: implement to_array
+	return 0;
 }
