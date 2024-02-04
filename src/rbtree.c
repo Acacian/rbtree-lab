@@ -15,7 +15,7 @@ rbtree *new_rbtree(void) {
   return p;
 }
 
-void right_rotation(rbtree * tree, node_t * x){ //오른쪽 회전 함수
+void right_rotation(rbtree * tree, node_t * x){
 
   node_t *y;
   // 1. target의 left으로 y설정
@@ -47,11 +47,11 @@ void right_rotation(rbtree * tree, node_t * x){ //오른쪽 회전 함수
 
 }
 
-void left_rotation(rbtree * tree, node_t * x){ // 왼쪽으로 회전시키는 함수
-  node_t *y; // y를 선언
+void left_rotation(rbtree * tree, node_t * x){
+  node_t *y;
 
-  y = x -> right; // 1. target의 right으로 y설정
-  x -> right = y -> left; // 2. y의 왼쪽 서브트리를 target의 오른쪽 서브트리로 옮김
+  y = x -> right;
+  x -> right = y -> left;
 
   if (y -> left != tree -> nil)
   y -> left -> parent = x;

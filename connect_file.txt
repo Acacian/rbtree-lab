@@ -1,0 +1,1 @@
+ssh -t ubuntu@13.125.206.231 -p 22 -i "C:\Users\RAON\Desktop\CRAFT\JUNGLE.pem"
