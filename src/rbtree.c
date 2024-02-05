@@ -211,7 +211,7 @@ void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
 void rbtree_delete_fixup(rbtree *t, node_t *x) {
   node_t *w = NULL; // x의 형제
   while (x != t->root && x->color == RBTREE_BLACK) {
-    if (x == x->parent->left) { // x가 부모의 왼쪽 자식이면
+    if (x == x->parent->left) {
       w = x->parent->right;
       if (w->color == RBTREE_RED) { // 형제가 붉은 색이면(경우 1)
         w->color = RBTREE_BLACK;
