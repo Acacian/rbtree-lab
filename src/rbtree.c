@@ -42,7 +42,7 @@ void right_rotate(rbtree *t, node_t *x) {
   y->right = x;
   x->parent = y;
 }
-void post_order_delete(rbtree *t, node_t *node) { // 후위순회로 노드들 지워줌
+void post_order_delete(rbtree *t, node_t *node) { // 후위순회로 노드들 지워줌(메모리누수 때문. 만약 전위/중위로 하게 되면 모든 노드를 다 탐색하지 않기 때문에 메모리 누수가 발생할 수 있음)
   if (node != t->nil){
     post_order_delete(t, node->left);
     post_order_delete(t, node->right);
